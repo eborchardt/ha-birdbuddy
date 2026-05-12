@@ -7,19 +7,44 @@ for API calls, also available on [PyPI](https://pypi.org/project/pybirdbuddy/).
 
 **Prior To Installation**
 
-You will need your Bird Buddy `email` and `password`.
+You'll need to sign in with either:
 
-> **Note**
->
-> If your BirdBuddy account was created using SSO (Google, Facebook, etc), those methods will
-> not work currently. To work around that, you can sign up a new account using email and password,
-> and then invite that new account as a member of your main/owner account. Be aware that certain
-> information or functionality may not be available to member accounts (for example, "off-grid"
-> settings and firmware version).
->
-> Alternatively, you may reset the Bird Buddy unit and re-pair it with a new account that was created
-> with a password. See [Bird Buddy support](https://support.mybirdbuddy.com/hc/en-us/articles/9764938883089-Connecting-Bird-Buddy-to-a-different-Wi-Fi-network)
-> for more information.
+- Your Bird Buddy `email` and `password`, or
+- A Google OAuth token captured from the Bird Buddy mobile app (for accounts
+  created via Google SSO).
+
+### Google SSO
+
+For Google-authenticated accounts, this integration uses a "paste a captured
+token" flow:
+
+1. Set up an HTTPS-intercepting proxy on your phone (e.g.
+   [mitmproxy](https://mitmproxy.org/), Charles, or Proxyman).
+2. Open the Bird Buddy mobile app and sign in with Google.
+3. In the proxy, find the request to
+   `graphql.app-api.prod.aws.mybirdbuddy.com/graphql` with operation name
+   `socialSignIn`. The request body contains a `token` field; that value is
+   your Google OAuth token.
+4. In Home Assistant, choose "Google (paste OAuth token)" during integration
+   setup and paste the captured token.
+
+The Google token is used once to authenticate, then discarded. Home Assistant
+stores only the Bird Buddy refresh token. The captured Google token expires
+within about an hour, so do this shortly before adding the integration. If
+the Bird Buddy session is ever rejected (e.g. on token refresh failure), HA
+will prompt to re-authenticate, and you'll need to capture a fresh token.
+
+### Apple or Facebook SSO
+
+Apple and Facebook SSO are not supported. Alternatives:
+
+- Sign up a new account using email and password, and invite that new account
+  as a member of your main/owner account. Be aware that certain information
+  or functionality may not be available to member accounts (for example,
+  "off-grid" settings and firmware version).
+- Reset the Bird Buddy unit and re-pair it with a new account created with a
+  password. See [Bird Buddy support](https://support.mybirdbuddy.com/hc/en-us/articles/9764938883089-Connecting-Bird-Buddy-to-a-different-Wi-Fi-network)
+  for more information.
 
 ## Installation
 
