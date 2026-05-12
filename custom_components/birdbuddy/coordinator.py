@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from birdbuddy.client import BirdBuddy
+from birdbuddy.exceptions import AuthenticationFailedError
 from birdbuddy.feed import FeedNode, FeedNodeType
 from birdbuddy.feeder import Feeder
 from birdbuddy.media import Collection
 from birdbuddy.sightings import PostcardSighting, SightingFinishStrategy
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import EventOrigin, HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     CALLBACK_TYPE,
     DataUpdateCoordinator,
@@ -119,6 +121,8 @@ class BirdBuddyDataUpdateCoordinator(DataUpdateCoordinator[BirdBuddy]):
             if not self.first_update:
                 feed = await self.client.refresh_feed()
                 await self._process_feed(feed)
+        except AuthenticationFailedError as exc:
+            raise ConfigEntryAuthFailed(str(exc)) from exc
         except Exception as exc:
             raise UpdateFailed(exc) from exc
 

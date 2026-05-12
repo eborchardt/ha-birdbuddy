@@ -2,10 +2,25 @@
   "config": {
     "step": {
       "user": {
+        "title": "Bird Buddy sign-in",
+        "description": "Choose how to sign in to your Bird Buddy account.",
+        "menu_options": {
+          "email": "Email and password",
+          "google": "Google (paste OAuth token)"
+        }
+      },
+      "email": {
         "title": "Fill in your Bird Buddy login credentials",
         "data": {
           "email": "[%key:common::config_flow::data::email%]",
           "password": "[%key:common::config_flow::data::password%]"
+        }
+      },
+      "google": {
+        "title": "Sign in with Google",
+        "description": "Paste a Google OAuth token captured from the Bird Buddy mobile app (e.g. via mitmproxy or Charles). The token is used once to authenticate, then discarded. See the integration README for capture instructions.",
+        "data": {
+          "google_token": "Google OAuth token"
         }
       }
     },
@@ -15,7 +30,8 @@
       "unknown": "[%key:common::config_flow::error::unknown%]"
     },
     "abort": {
-      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]"
     }
   },
   "entity": {

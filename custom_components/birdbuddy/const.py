@@ -10,6 +10,13 @@ DOMAIN = "birdbuddy"
 LOGGER = logging.getLogger(__package__)
 MANUFACTURER = "Bird Buddy, Inc."
 
+# Auth method markers stored on ConfigEntry.data to discriminate between
+# email/password sign-in and Google SSO.
+CONF_AUTH_METHOD = "auth_method"
+CONF_REFRESH_TOKEN = "refresh_token"
+AUTH_METHOD_EMAIL = "email"
+AUTH_METHOD_GOOGLE = "google"
+
 # Default polling interval.
 # For best performance, this should be less than the access token expiration
 POLLING_INTERVAL = timedelta(minutes=10)

@@ -28,6 +28,20 @@ from pytest_homeassistant_custom_component.common import (
 pytest_plugins = "pytest_homeassistant_custom_component"
 
 
+def pytest_configure(config):
+    """Disable pytest-socket's per-test hook by neutering its disable function.
+
+    Python 3.13's Windows ProactorEventLoop creates a real socket pair for
+    asyncio's self-pipe during the event_loop fixture setup, which runs
+    before any test-level autouse fixture. pytest-socket's default block
+    raises SocketBlockedError there. All external network access in these
+    tests is mocked, so disabling pytest-socket entirely is safe.
+    """
+    import pytest_socket
+    pytest_socket.disable_socket = lambda *args, **kwargs: None
+    pytest_socket.enable_socket()
+
+
 # This fixture enables loading custom integrations in all tests.
 # Remove to enable selective use of this fixture
 @pytest.fixture(autouse=True)

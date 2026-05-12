@@ -12,6 +12,10 @@ from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
+    AUTH_METHOD_EMAIL,
+    AUTH_METHOD_GOOGLE,
+    CONF_AUTH_METHOD,
+    CONF_REFRESH_TOKEN,
     DOMAIN,
     LOGGER,
     SERVICE_COLLECT_POSTCARD,
@@ -45,7 +49,13 @@ async def async_setup_entry(
 ) -> bool:
     """Set up Bird Buddy from a config entry."""
     hass.data.setdefault(DOMAIN, {})
-    client = BirdBuddy(entry.data[CONF_EMAIL], entry.data[CONF_PASSWORD])
+    # Default to email for backward compatibility with entries created before
+    # the auth-method field existed.
+    auth_method = entry.data.get(CONF_AUTH_METHOD, AUTH_METHOD_EMAIL)
+    if auth_method == AUTH_METHOD_GOOGLE:
+        client = BirdBuddy(refresh_token=entry.data[CONF_REFRESH_TOKEN])
+    else:
+        client = BirdBuddy(entry.data[CONF_EMAIL], entry.data[CONF_PASSWORD])
     client.language_code = hass.config.language
     coordinator = BirdBuddyDataUpdateCoordinator(hass, client, entry)
 
